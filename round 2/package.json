@@ -1,0 +1,21 @@
+{
+  "name": "food-grocery-quick-commerce-round2",
+  "version": "1.0.0",
+  "description": "Round 2 Low-Level Design REST APIs & Web Application for Food & Grocery Quick-Commerce Platform",
+  "scripts": {
+    "backend": "cd backend && npm start",
+    "backend:dev": "cd backend && npm run dev",
+    "frontend": "cd frontend && npm run dev",
+    "test": "cd backend && node test-api.js"
+  },
+  "keywords": [
+    "quick-commerce",
+    "grocery",
+    "express",
+    "react",
+    "lld",
+    "rest-api"
+  ],
+  "author": "",
+  "license": "ISC"
+}

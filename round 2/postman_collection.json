@@ -1,0 +1,307 @@
+{
+  "info": {
+    "_postman_id": "b4e892c1-8840-4137-9753-food-grocery-quick-commerce",
+    "name": "Food & Grocery Quick-Commerce Platform - Round 2 LLD APIs",
+    "description": "Postman Collection covering all Round 2 Low-Level Design REST APIs for Food & Grocery Quick-Commerce.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "userId",
+      "value": "U101",
+      "type": "string"
+    },
+    {
+      "key": "productId",
+      "value": "P101",
+      "type": "string"
+    },
+    {
+      "key": "deliveryId",
+      "value": "DEL-5001",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Product Search",
+      "item": [
+        {
+          "name": "Search Products by Name (e.g. milk)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/search?q=milk",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products", "search"],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "milk",
+                  "description": "Product name query"
+                }
+              ]
+            },
+            "description": "Searches grocery catalog by name. Returns array of matching products."
+          },
+          "response": [
+            {
+              "name": "200 Success - Products Found",
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "[\n  {\n    \"productId\": \"P101\",\n    \"name\": \"Amul Taaza Fresh Toned Milk\",\n    \"price\": 32,\n    \"category\": \"Dairy & Breakfast\",\n    \"unit\": \"500 ml\",\n    \"inStock\": true,\n    \"availableQuantity\": 25\n  },\n  {\n    \"productId\": \"P111\",\n    \"name\": \"Mother Dairy Cow Milk Pouch\",\n    \"price\": 28,\n    \"category\": \"Dairy & Breakfast\",\n    \"unit\": \"500 ml\",\n    \"inStock\": true,\n    \"availableQuantity\": 20\n  }\n]"
+            },
+            {
+              "name": "200 Success - No Matches (Empty Array)",
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "[]"
+            }
+          ]
+        },
+        {
+          "name": "Get All Catalog Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Nearby Inventory",
+      "item": [
+        {
+          "name": "Check Nearby Inventory (P101)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/inventory/nearby?productId=P101",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "inventory", "nearby"],
+              "query": [
+                {
+                  "key": "productId",
+                  "value": "P101"
+                }
+              ]
+            },
+            "description": "Returns dark store ID, stock quantity, and availability status."
+          },
+          "response": [
+            {
+              "name": "200 Success - Inventory Details",
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"productId\": \"P101\",\n  \"productName\": \"Amul Taaza Fresh Toned Milk\",\n  \"storeId\": \"STORE_BLR_01\",\n  \"storeName\": \"Koramangala Hyperlocal Hub #14\",\n  \"availableQuantity\": 25,\n  \"inStock\": true,\n  \"pincode\": \"560034\",\n  \"deliveryTimeMinutes\": 10\n}"
+            },
+            {
+              "name": "404 Not Found - Unknown Product",
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"error\": \"PRODUCT_NOT_FOUND\",\n  \"message\": \"Product 'P999' not found in catalog or nearby dark stores.\",\n  \"productId\": \"P999\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3. Cart Management",
+      "item": [
+        {
+          "name": "Add Product to Cart",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"U101\",\n  \"productId\": \"P101\",\n  \"quantity\": 2\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/cart/items",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cart", "items"]
+            },
+            "description": "Adds or updates product quantity in user cart."
+          },
+          "response": [
+            {
+              "name": "201 Created - Item Added",
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"message\": \"Product added to cart successfully\",\n  \"cart\": {\n    \"userId\": \"U101\",\n    \"items\": [\n      {\n        \"productId\": \"P101\",\n        \"name\": \"Amul Taaza Fresh Toned Milk\",\n        \"price\": 32,\n        \"quantity\": 2,\n        \"subtotal\": 64\n      }\n    ],\n    \"totalItems\": 2,\n    \"subtotal\": 64,\n    \"deliveryFee\": 25,\n    \"totalAmount\": 89\n  }\n}"
+            },
+            {
+              "name": "400 Bad Request - Invalid Quantity",
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"error\": \"INVALID_QUANTITY\",\n  \"message\": \"Quantity must be a positive integer greater than zero.\",\n  \"providedQuantity\": -2\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get User Cart",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/cart/U101",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cart", "U101"]
+            }
+          }
+        },
+        {
+          "name": "Clear Cart",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/cart/U101",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cart", "U101"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. & 5. Place Order & Partner Assignment",
+      "item": [
+        {
+          "name": "Place Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"U101\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "orders"]
+            },
+            "description": "Validates cart & stock, reserves inventory, generates orderId, assigns delivery partner, and returns delivery details."
+          },
+          "response": [
+            {
+              "name": "201 Created - Order & Delivery Assigned",
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"message\": \"Order placed successfully! Delivery partner assigned.\",\n  \"order\": {\n    \"orderId\": \"ORD-1001\",\n    \"userId\": \"U101\",\n    \"storeId\": \"STORE_BLR_01\",\n    \"items\": [\n      {\n        \"productId\": \"P101\",\n        \"name\": \"Amul Taaza Fresh Toned Milk\",\n        \"price\": 32,\n        \"quantity\": 2,\n        \"subtotal\": 64\n      }\n    ],\n    \"totalItems\": 2,\n    \"totalAmount\": 89,\n    \"status\": \"CONFIRMED\"\n  },\n  \"delivery\": {\n    \"deliveryId\": \"DEL-5001\",\n    \"orderId\": \"ORD-1001\",\n    \"partnerId\": \"DP101\",\n    \"partnerName\": \"Rajesh Kumar\",\n    \"partnerPhone\": \"+91 98765 43210\",\n    \"vehicle\": \"Ather 450X EV (KA-01-EQ-4421)\",\n    \"status\": \"ASSIGNED\",\n    \"estimatedDeliveryMins\": 10\n  }\n}"
+            },
+            {
+              "name": "400 Bad Request - Empty Cart",
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"error\": \"EMPTY_CART\",\n  \"message\": \"Cart is empty. Please add items to cart before placing an order.\"\n}"
+            },
+            {
+              "name": "409 Conflict - Insufficient Stock",
+              "status": "Conflict",
+              "code": 409,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"error\": \"INSUFFICIENT_STOCK\",\n  \"message\": \"Insufficient inventory for product 'Amul Taaza Fresh Toned Milk' (ID: P101). Requested: 50, Available: 25\",\n  \"productId\": \"P101\",\n  \"requested\": 50,\n  \"available\": 25\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Orders List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders?userId=U101",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "orders"],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "U101"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Delivery Status & Tracking",
+      "item": [
+        {
+          "name": "Get Delivery Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/deliveries/{{deliveryId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "deliveries", "{{deliveryId}}", "status"]
+            },
+            "description": "Returns deliveryId, orderId, partnerId, and status (ASSIGNED, PICKED_UP, OUT_FOR_DELIVERY, DELIVERED)."
+          },
+          "response": [
+            {
+              "name": "200 OK - Active Delivery Status",
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"deliveryId\": \"DEL-5001\",\n  \"orderId\": \"ORD-1001\",\n  \"partnerId\": \"DP101\",\n  \"partnerName\": \"Rajesh Kumar\",\n  \"partnerPhone\": \"+91 98765 43210\",\n  \"vehicle\": \"Ather 450X EV (KA-01-EQ-4421)\",\n  \"status\": \"ASSIGNED\",\n  \"estimatedDeliveryMins\": 10\n}"
+            },
+            {
+              "name": "404 Not Found - Invalid Delivery ID",
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"error\": \"DELIVERY_NOT_FOUND\",\n  \"message\": \"Delivery with ID 'INVALID_ID' does not exist.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Advance Delivery Status (Simulation)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/deliveries/{{deliveryId}}/advance",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "deliveries", "{{deliveryId}}", "advance"]
+            },
+            "description": "Advances status sequentially: ASSIGNED -> PICKED_UP -> OUT_FOR_DELIVERY -> DELIVERED"
+          }
+        }
+      ]
+    }
+  ]
+}

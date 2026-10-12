@@ -1,0 +1,19 @@
+{
+  "name": "quick-commerce-backend",
+  "version": "1.0.0",
+  "description": "Round 2 Low-Level Design REST API for Food & Grocery Quick-Commerce Platform",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": ["quick-commerce", "grocery", "express", "lld", "rest-api"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "morgan": "^1.10.0"
+  }
+}
